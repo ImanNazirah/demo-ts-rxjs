@@ -1,24 +1,20 @@
-## Initialize project
-mkdir ts-learn-rxjs
-cd ts-learn-rxjs
-npm init -y
-npm install typescript --save-dev
-npx tsc --init
+# TypeScript and RxJS API Interaction Example
 
-npm install rxjs
-npm install @types/node --save-dev
+## Overview
 
-npm install axios
-npm install @types/axios --save-dev
+This project demonstrates how to interact with a RESTful API using TypeScript and RxJS. It showcases various techniques for fetching, processing, and transforming data from the JSONPlaceholder API. Key functionalities include:
 
+- **Fetching Data:** Retrieves data from the JSONPlaceholder API.
+- **RxJS Integration:** Utilizes RxJS for handling asynchronous data streams and operations.
+- **Data Processing:** Includes examples of data transformation, sorting, and filtering.
+- **Error Handling:** Demonstrates error handling with RxJS and TypeScript.
 
-## Context
-- In real world FE side will call the API, then somehow we want to manipulate the data from FE side, we can use the reactive programming for readable code.
-- Assuming we have tha data from json files are what we retrived from BE side response data then convert it to observable and performing data processing using rxjs.
+## Run Application
 
+1. **Ensure the script has executable permissions, then run the following command :**
 
-## To run application
-./run.sh
+   ```bash
+    ./run.sh
 
-## Ouput
-check the generated log filename build-and-run.log
+2. **build-and-run.log will generated:**
+
