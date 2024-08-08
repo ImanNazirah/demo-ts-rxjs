@@ -11,10 +11,7 @@ This project demonstrates how to interact with a RESTful API using TypeScript an
 
 ## Run Application
 
-1. **Ensure the script has executable permissions, then run the following command :**
+1. **Ensure the script has executable permissions, then run the following command to generate file build-and-run.log :**
 
    ```bash
     ./run.sh
-
-2. **build-and-run.log will generated:**
-
