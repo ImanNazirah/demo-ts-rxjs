@@ -1,16 +1,29 @@
-import { Observable, from } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
-import axios from 'axios';
-import { User } from '../model/user';
+export interface User {
+    id: number;
+    name: string;
+    username: string;
+    email: string;
+    address: Address;
+    phone: string;
+    website: string;
+    company: Company;
+}
 
-const USERS_URL = 'https://jsonplaceholder.typicode.com/users';
+interface Address {
+    street: string;
+    suite: string;
+    city: string;
+    zipcode: string;
+    geo: Geo;
+}
 
-export function fetchUsers(): Observable<User[]> {
-    return from(axios.get<User[]>(USERS_URL)).pipe(
-        map(response => response.data),
-        catchError(error => {
-            console.error('Error fetching User:', error);
-            throw error;
-        })
-    );
+interface Geo {
+    lat: string;
+    lng: string;
+}
+
+interface Company {
+    name: string;
+    catchPhrase: string;
+    bs: string;
 }
