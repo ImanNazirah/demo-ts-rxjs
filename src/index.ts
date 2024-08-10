@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { GroupedObservable, of } from 'rxjs';
+import { GroupedObservable, Observable, of } from 'rxjs';
 import { Post } from './api/Post';
 import { User } from './api/User';
 import { PostData, PostOutput } from './model/PostOutput';
@@ -22,40 +22,6 @@ async function main() {
     let filterUserCity: User[];
 
     try {
-
-        const processSortByName = (x: User[]) => {
-            return of(x).pipe(
-                map((users: User[]) => {
-                    return users.sort((a: User, b: User) => a.name.localeCompare(b.name));
-                })
-            );
-        };
-
-        const processSortByCity = (x: User[]) => {
-            return of(x).pipe(
-                map((users: User[]) => {
-                    return users.sort((a: User, b: User) => a.address.city.localeCompare(b.address.city));
-                })
-            );
-        };
-
-        const processCityList = (x: User[]) => {
-            return of(x).pipe(
-                map((users: User[]) => {
-                    const cities = users.map(y => y.address.city);
-                    //Use set to remove duplicates and return disctinct cities
-                    return Array.from(new Set(cities));
-                })
-            );
-        };
-
-        const processFilterUserCity = (x: User[]) => {
-            return of(x).pipe(
-                map((users: User[]) => {
-                    return users.filter(user => user.address.city.toLowerCase().includes('south'));
-                })
-            );
-        };
 
         // Fetch data and then process it
         userService.getUsers().subscribe({
@@ -132,6 +98,38 @@ async function main() {
     }
 
 
+}
+
+function processSortByName(x: User[]): Observable<User[]> {
+    return of(x).pipe(
+        map(x => x.sort((a, b) => a.name.localeCompare(b.name)))
+    );
+}
+
+function processSortByCity(x: User[]): Observable<User[]> {
+    return of(x).pipe(
+        map((users: User[]) => {
+            return users.sort((a: User, b: User) => a.address.city.localeCompare(b.address.city));
+        })
+    );
+}
+
+function processCityList(x: User[]): Observable<string[]> {
+    return of(x).pipe(
+        map((users: User[]) => {
+            const cities = users.map(y => y.address.city);
+            //Use set to remove duplicates and return disctinct cities
+            return Array.from(new Set(cities));
+        })
+    );
+}
+
+function processFilterUserCity(x: User[]): Observable<User[]> {
+    return of(x).pipe(
+        map((users: User[]) => {
+            return users.filter(user => user.address.city.toLowerCase().includes('south'));
+        })
+    );
 }
 
 
