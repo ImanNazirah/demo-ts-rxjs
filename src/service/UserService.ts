@@ -1,16 +1,25 @@
 import { Observable, from } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import axios from 'axios';
+import { AxiosStatic } from 'axios';
 import { User } from '../api/User';
 
-const USERS_URL = 'https://jsonplaceholder.typicode.com/users';
+export class UserService {
 
-export function fetchUsers(): Observable<User[]> {
-    return from(axios.get<User[]>(USERS_URL)).pipe(
-        map(response => response.data),
-        catchError(error => {
-            console.error('Error fetching User:', error);
-            throw error;
-        })
-    );
+    private readonly USERS_URL: string;
+
+    constructor(private axios: AxiosStatic) {
+        this.USERS_URL= `${process.env.API_BASE_URL}/users`;
+
+    }
+    
+    getUsers() : Observable<User[]> {
+        return from(this.axios.get<User[]>(this.USERS_URL)).pipe(
+            map(response => response.data),
+            catchError(error => {
+                console.error('Error fetching user:', error);
+                throw error;
+            })
+        );
+    }
+
 }

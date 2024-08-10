@@ -1,16 +1,24 @@
 import { Observable, from } from 'rxjs';
 import { catchError, map } from 'rxjs/operators';
-import axios from 'axios';
+import { AxiosStatic } from 'axios';
 import { Post } from '../api/Post';
 
-const POSTS_URL = 'https://jsonplaceholder.typicode.com/posts';
+export class PostService {
 
-export function fetchPosts(): Observable<Post[]> {
-    return from(axios.get<Post[]>(POSTS_URL)).pipe(
-        map(response => response.data),
-        catchError(error => {
-            console.error('Error fetching posts:', error);
-            throw error;
-        })
-    );
+    private readonly POSTS_URL: string;
+
+    constructor(private axios: AxiosStatic) {
+        this.POSTS_URL= `${process.env.API_BASE_URL}/posts`;
+    }
+    
+    getPosts() : Observable<Post[]> {
+        return from(this.axios.get<Post[]>(this.POSTS_URL)).pipe(
+            map(response => response.data),
+            catchError(error => {
+                console.error('Error fetching posts:', error);
+                throw error;
+            })
+        );
+    }
+
 }
