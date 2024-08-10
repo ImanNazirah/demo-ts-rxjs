@@ -1,6 +1,5 @@
 // import * as dotenv from 'dotenv';
-
-import { GroupedObservable, from } from 'rxjs';
+import { GroupedObservable} from 'rxjs';
 import { Post } from './api/Post';
 import { User } from './api/User';
 import { PostData, PostOutput } from './model/PostOutput';
