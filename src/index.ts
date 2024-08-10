@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { GroupedObservable, from} from 'rxjs';
+import { GroupedObservable, from, of} from 'rxjs';
 import { Post } from './api/Post';
 import { User } from './api/User';
 import { PostData, PostOutput } from './model/PostOutput';
@@ -16,28 +16,52 @@ async function main() {
     const postService = new PostService(axios);
     const userService = new UserService(axios);
     let transformedPost: PostOutput[] = [];
+    let sortUserByName : User[];
+    let sortUserByCity : User[];
 
     try {
 
-        // Sort users by name in ascending order
-        userService.getUsers().pipe(
-            tap((x: User[]) => console.log('Fetched Users From API:', x)),
-            map((x: User[]) => {
-                return x.sort((a: User, b: User) => a.name.localeCompare(b.name));
-            })
-        ).subscribe((x: User[]) => {
-            console.log('Processed Users 1:', JSON.stringify(x, null, 2));
-        });
+        const processSortByName = (x: User[]) => {
+            return of(x).pipe(
+                map((users: User[]) => {
+                    return users.sort((a: User, b: User) => a.name.localeCompare(b.name));
+                })
+            );
+        };
 
-        // Sort users by city in ascending order
-        userService.getUsers().pipe(
-            map((x: User[]) => {
-                return x.sort((a: User, b: User) => a.address.city.localeCompare(b.address.city));
-            }))
-            .subscribe((x: User[]) => {
-                console.log('Processed Users 2:', JSON.stringify(x, null, 2));
-            });
-        
+        const processSortByCity = (x: User[]) => {
+            return of(x).pipe(
+                map((users: User[]) => {
+                    return users.sort((a: User, b: User) => a.address.city.localeCompare(b.address.city));
+                })
+            );
+        };
+          
+        // Fetch data and then process it
+        userService.getUsers().subscribe({
+
+            next: (x: User[]) => {
+                
+                console.log('Fetched Users From API : ', x);
+
+                processSortByName(x).subscribe({
+                    next: transformedData => {
+                        sortUserByName = transformedData;
+                        console.log('Processed processSortByName:', JSON.stringify(sortUserByName, null, 2))},
+                    error: err => console.error('Error in Processing processSortByName:', err)
+                });
+            
+                processSortByCity(x).subscribe({
+                    next: transformedData => {
+                        sortUserByCity = transformedData;
+                        console.log('Processed processSortByCity:', JSON.stringify(sortUserByCity, null, 2))},
+                    error: err => console.error('Error in Processing processSortByCity:', err)
+                });
+
+            },
+            error: err => console.error('Error in Fetching x:', err)
+        });
+       
         //Group based on userId then display different type
         postService.getPosts().pipe(
             tap((x: Post[]) => console.log('Fetched Post From API:', x)),
