@@ -18,7 +18,8 @@ async function main() {
     let transformedPost: PostOutput[] = [];
     let sortUserByName : User[];
     let sortUserByCity : User[];
-
+    let cityList:string[];
+    let filterUserCity : User[];
     try {
 
         const processSortByName = (x: User[]) => {
@@ -36,26 +37,62 @@ async function main() {
                 })
             );
         };
+
+        const processCityList =  (x: User[]) => {
+            return of(x).pipe(
+                map((users: User[]) => {
+                    const cities = users.map(y => y.address.city);
+                    //Use set to remove duplicates and return disctinct cities
+                    return Array.from(new Set(cities));
+                })
+            );
+        };
+
+        const processFilterUserCity =  (x: User[]) => {
+            return of(x).pipe(
+                map((users: User[]) => {
+                    return users.filter(user => user.address.city.toLowerCase().includes('south'));
+                })
+            );
+        };
           
         // Fetch data and then process it
         userService.getUsers().subscribe({
 
             next: (x: User[]) => {
-                
+
                 console.log('Fetched Users From API : ', x);
 
                 processSortByName(x).subscribe({
                     next: transformedData => {
                         sortUserByName = transformedData;
-                        console.log('Processed processSortByName:', JSON.stringify(sortUserByName, null, 2))},
+                        console.log('Processed processSortByName:', JSON.stringify(sortUserByName, null, 2))
+                    },
                     error: err => console.error('Error in Processing processSortByName:', err)
                 });
             
                 processSortByCity(x).subscribe({
                     next: transformedData => {
                         sortUserByCity = transformedData;
-                        console.log('Processed processSortByCity:', JSON.stringify(sortUserByCity, null, 2))},
+                        console.log('Processed processSortByCity:', JSON.stringify(sortUserByCity, null, 2))
+                    },
                     error: err => console.error('Error in Processing processSortByCity:', err)
+                });
+
+                processCityList(x).subscribe({
+                    next: transformedData => {
+                        cityList = transformedData;
+                        console.log('Processed processCityList:', JSON.stringify(cityList, null, 2))
+                    },
+                    error: err => console.error('Error in Processing processCityList:', err)
+                });
+
+                processFilterUserCity(x).subscribe({
+                    next: transformedData => {
+                        filterUserCity = transformedData;
+                        console.log('Processed processFilterUserCity:', JSON.stringify(filterUserCity, null, 2))
+                    },
+                    error: err => console.error('Error in Processing processFilterUserCity:', err)
                 });
 
             },
